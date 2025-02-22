@@ -1,4 +1,5 @@
 import argparse
+import os
 import shutil
 from datetime import datetime
 
@@ -16,7 +17,27 @@ parser.add_argument("--output", default="./output.xlsx", help="Dir or file to st
 
 args = parser.parse_args()
 
-schema_path = Path(f"~/.steam/root/appcache/stats/").expanduser().resolve().absolute()
+
+if os.name != 'nt':
+    schema_path = Path("~/.steam/root/appcache/stats/").expanduser().resolve().absolute()
+else:
+    schema_path = None
+    import winreg
+    try:
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, "SOFTWARE\\WOW6432Node\\Valve\\Steam") as hkey:
+            steam_path = winreg.QueryValueEx(hkey, "InstallPath")
+            schema_path = (Path(steam_path[0]) / "appcache/stats/").resolve().absolute()
+    except FileNotFoundError:
+        pass
+
+if not schema_path:
+    print("Steam install not found")
+    exit(1)
+
+if not schema_path.exists():
+    print("appcache/stats not found")
+    exit(2)
+
 workbook = None
 
 old_path = None
