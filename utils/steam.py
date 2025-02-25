@@ -8,13 +8,16 @@ from sortedcontainers import SortedDict
 from model import Achievement, Game
 
 
-def get_localized_vals(value, display_schema) -> tuple[str, str | None]:
+def get_localized_vals(value, display_schema) -> str:
     if isinstance(display_schema[value], dict):
-        orig_val = display_schema[value]["english"]
-    else:
-        orig_val = display_schema[value]
+        if "english" in display_schema[value]:
+            return display_schema[value]["english"]
+        elif len(display_schema[value].keys()) > 0:
+            return display_schema[value][list(display_schema[value].keys())[0]]
+    elif isinstance(display_schema[value], str):
+        return display_schema[value]
 
-    return orig_val
+    return "none"
 
 
 def parse_achievement_schema(vdf_schema: dict) -> Achievement | None:
