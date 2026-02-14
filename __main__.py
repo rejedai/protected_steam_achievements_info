@@ -126,7 +126,7 @@ for file in schema_path.glob("UserGameStatsSchema_*.bin"):
             continue
 
         for stat in app_stats['stats'].values():
-            if stat['type'] == '4':
+            if stat['type'] == '4' or stat['type'] == 'ACHIEVEMENTS':
                 for achievement in stat['bits'].values():
                     new_achievement = steam.parse_achievement_schema(achievement)
                     has_protected = has_protected or new_achievement.protected
