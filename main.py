@@ -12,6 +12,11 @@ from pathlib import Path
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument(
+    "--steam-api-key",
+    required=True,
+    help="Steam Web API Key, can be obtained from https://steamcommunity.com/dev/apikey"
+)
 parser.add_argument("--oldresult", default=None, help="Use previous result for concatenation", action="store")
 parser.add_argument("--output", default="./output.xlsx", help="Dir or file to store", action="store")
 
@@ -66,7 +71,7 @@ if old_path == new_path:
 if old_path:
     workbook = openpyxl.load_workbook(old_path)
 
-games_database = steam.get_apps_info()
+games_database = steam.get_apps_info(args.steam_api_key)
 if len(games_database) == 0:
     print("Can't get games")
     exit(1)

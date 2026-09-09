@@ -31,19 +31,29 @@ def parse_achievement_schema(vdf_schema: dict) -> Achievement | None:
     return achievement_data
 
 
-def get_apps_info() -> dict[str, Game]:
-    request_url = "https://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json"
+def get_apps_info(steam_api_key: str, last_appid: int = 0, _games_database=None) -> dict[str, Game]:
+    request_url = (
+        f"https://api.steampowered.com/IStoreService/GetAppList/v1/?key={steam_api_key}"
+        "&include_games=true&include_dlc=false&include_software=false&include_videos=false"
+        "&include_hardware=false&max_results=50000"
+        f"&last_appid={str(last_appid)}"
+    )
 
     data = request.urlopen(request_url)
     result = json.loads(data.read().decode())
 
-    _games_database = SortedDict()
-    if result.get("applist") and result["applist"].get("apps"):
-        for app in result["applist"]["apps"]:
+    if _games_database is None:
+        _games_database = SortedDict()
+
+    if result.get("response") and "apps" in result.get("response"):
+        for app in result["response"]["apps"]:
             _games_database[app["appid"]] = Game(
                 name=app["name"],
                 appid=app["appid"],
             )
+        if "last_appid" in result["response"] and result["response"].get("have_more_results", False):
+            return get_apps_info(steam_api_key, result["response"]["last_appid"], _games_database)
+
     return _games_database
 
 
