@@ -2,20 +2,16 @@
 
 ### Launch
 
-You need configured python env with installed openpyxl, sortedcontainers and vdf.
+To launch need [uv](https://docs.astral.sh/uv/) and Steam Web API [Key](https://steamcommunity.com/dev/apikey).
 
-`pip install openpyxl sortedcontainers vds`
+`uv sync`
 
 Then launch:
 
-`python __main__.py`
-
-You can use args to configure output location, etc:
-
 linux:
-`python __main__.py --oldresult=/home/user/output.xlsx --output=/home/user/output.xlsx`
+`uv run main.py --steam-api-key=YOUR_KEY --oldresult=/home/user/output.xlsx --output=/home/user/output.xlsx`
 
 windows:
-`python __main__.py --oldresult=c:\\users\\user\\output.xlsx --output=c:\\users\\user\\output.xlsx`
+`uv run main.py --steam-api-key=YOUR_KEY --oldresult=c:\\users\\user\\output.xlsx --output=c:\\users\\user\\output.xlsx`
 
-Following string backup original output.xlsx file and write new result to same path.
+> **Note:** Following command backs up original `output.xlsx` file and writes the new result to the same path.
